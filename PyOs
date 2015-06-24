@@ -1,0 +1,76 @@
+# Import Libraries
+import subprocess as sp
+import json
+import time
+import sys
+import os
+# Create Enviroment Variable
+init = os.path.dirname(os.path.realpath(__file__))
+# Check For Config File
+if os.path.exists(init + "/config.json"):
+	jConfig = open("config.json", "r")
+	Config = json.load(jConfig)
+# Make Users Directory
+if not os.path.exists(init + "/users/"):
+	os.makedirs("users")
+# Make Documents Directory
+if not os.path.exists(init + "/documents/"):
+	os.makedirs("documents")
+# Command System
+def com():
+	print(username + " # " + "PyOs")
+	command = raw_input("")
+	if command == "time":
+		print(time.strftime("%I:%M:%S"))
+		com()
+	elif command == "shutdown":
+		print("shutting down")
+		sys.exit(0)
+	elif command == "clear":
+		tmp = sp.call('clear', shell=True)
+		com()
+	elif command == "note":
+		write = 1
+		finame = raw_input("File Name: ")
+		project = open(init + "/documents/" + finame, "w")
+		while write == 1:
+			line = raw_input("")
+			if line == "--EXIT--":
+				write = 0
+				project.close()
+				com()
+			else:
+				project.write(line + "\n")
+	elif command == "show":
+		sFile = raw_input("File: ")
+		fi = open(init + "/documents/" + sFile)
+		print fi.read()
+		fi.close()
+		com()
+	else:
+		com()
+
+# Login System
+ch = raw_input("create account(C) or login(L): ")
+if ch == "C":
+	username = raw_input("Desired Username: ")
+	password = raw_input("Desired Passsword: ")
+	uFile = open(init + "/users/" + username + ".json", "w")
+	uFile.write("{" + "\n" + "	\"password\":" + "\"" + password + "\"" + "\n" + "}")
+	uFile.close()
+if ch == "L":
+	username = raw_input("Username: ")
+	if os.path.exists(init + "/users/" + username + ".json"):
+		jUser = open(init + "/users/" + username + ".json", "r")
+		user = json.load(jUser)
+		password = raw_input("Passsword: ")
+		if password == user['password']:
+			print('Login Successful')
+			jUser.close()
+			com()
+		else:
+			print('Wrong Password')
+	else:
+		print('No User Named ' + username)
+
+# Python Script Written By DigitalReset/Brayden Gznelburiukz
